@@ -1,0 +1,2 @@
+class GitlabRest:
+    pass

@@ -1,0 +1,2 @@
+class GitlabGraphQL:
+    pass
