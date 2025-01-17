@@ -25,21 +25,21 @@ clean:
 
 .PHONY: check-format
 check-format: ##  Check formatting, but do not fix
-	ruff format src tests --check
+	uv run ruff format src tests --check
 
 .PHONY: format
 format: ##  Fix imports and formatting
-	ruff check --fix --select I 
-	ruff format src tests
+	uv run ruff check --fix --select I 
+	uv run ruff format src tests
 
 .PHONY: types
 types:  # Run the type checker
-	mypy src
-	mypy tests
+	uv run mypy src
+	uv run mypy tests
 
 .PHONY: lint
 lint:  ## Run the linter
-	ruff check src tests
+	uv run ruff check src tests
 
 .PHONY: test
 test:  ## Run unit tests
