@@ -1,0 +1,43 @@
+[project]
+name = "dagster-gitlab"
+version = "0.1.0"
+description = "Provides a Dagster integration that is a wrapper around python-gitlab, using the v4 GitLab API"
+readme = "README.md"
+license = { text = "MIT License" }
+authors = [{ name = "Cooper Ellidge", email = "cooper.ellidge@gmail.com" }]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Developers",
+    "Topic :: System :: Monitoring",
+    "Topic :: Software Development :: Libraries",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
+dependencies = ["dagster>=1.9.8", "python-gitlab>=5.3.1", "responses>=0.25.6"]
+
+[dependency-groups]
+dev = ["mypy>=1.14.1", "pytest>=8.3.4", "ruff>=0.9.2"]
+
+[project.urls]
+Homepage = "https://github.com/cooperellidge/dagster-gitlab"
+Repository = "https://github.com/cooperellidge/dagster-gitlab"
+Documentation = "https://cooperellidge.github.io/dagster-gitlab"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
