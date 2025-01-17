@@ -6,6 +6,27 @@ help: ## Display this help screen
 .venv:  ## Create a virtual environment from lockfile
 	uv sync --locked
 
+.PHONY: clean
+clean:
+	find ./src | grep -E "(__pycache__$$)" | xargs rm -rf
+	find ./src | grep -E "(\.pyc$$)" | xargs rm -rf
+	find ./src | grep -E "(\.pyo$$)" | xargs rm -rf
+
+
+	find ./tests | grep -E "(__pycache__$$)" | xargs rm -rf
+	find ./tests | grep -E "(\.pyc$$)" | xargs rm -rf
+	find ./tests | grep -E "(\.pyo$$)" | xargs rm -rf
+
+	rm -vrf .mypy_cache
+	rm -vrf .pytest_cache
+	rm -vrf .ruff_cache
+
+	rm -vrf dist/
+
+.PHONY: check-format
+check-format: ##  Check formatting, but do not fix
+	ruff format src tests --check
+
 .PHONY: format
 format: ##  Fix imports and formatting
 	ruff check --fix --select I 
