@@ -44,3 +44,6 @@ lint:  ## Run the linter
 .PHONY: test
 test:  ## Run unit tests
 	uv run pytest tests
+
+.PHONY: check  ## Run static checks (format, types, lint, tests)
+check: format types lint test
