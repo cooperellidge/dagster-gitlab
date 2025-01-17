@@ -41,6 +41,13 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["ALL"]
+ignore = [
+    "D104",   # Module level docstrings are a bit weird
+    "COM812", # Avoid conflict with formatter
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
