@@ -5,7 +5,7 @@ import gitlab.base
 import gitlab.v4
 import gitlab.v4.objects
 
-from dagster_gitlab._utils.type import is_rest_object_subclass
+from dagster_gitlab._utils.type_guards import is_rest_object_subclass
 
 
 class GitlabRest:
