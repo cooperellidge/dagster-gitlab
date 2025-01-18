@@ -26,4 +26,4 @@ jobs:
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          uv publish --publish-url ${{ env.PYPI_URL }}
+          uv publish --publish-url ${{ vars.PYPI_URL }}
