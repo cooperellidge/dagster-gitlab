@@ -55,3 +55,9 @@ build-docs:  ## Build documentation in the ./out directory
 .PHONY: serve-docs
 serve-docs:  ## Serve docs on localhost:8000
 	uv run mkdocs serve
+
+.PHONY: set-version
+set-version: ## Change version by passing in "v=x.y.z", updating pyproject.toml and lockfile
+	sed -i '' 's/^version *= *".*"/version = "$(v)"/' pyproject.toml
+	uv lock --upgrade-package dagster-gitlab
+
