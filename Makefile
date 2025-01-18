@@ -47,3 +47,11 @@ test:  ## Run unit tests
 
 .PHONY: check  ## Run static checks (format, types, lint, tests)
 check: format types lint test
+
+.PHONY: build-docs
+build-docs:  ## Build documentation in the ./out directory
+	uv run mkdocs build --site-dir out
+
+.PHONY: serve-docs
+serve-docs:  ## Serve docs on localhost:8000
+	uv run mkdocs serve
