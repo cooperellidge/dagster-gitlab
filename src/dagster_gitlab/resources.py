@@ -1,6 +1,6 @@
 from typing import Any, overload
 
-from dagster import ConfigurableResource, InitResourceContext, resource
+from dagster import ConfigurableResource
 
 from dagster_gitlab import GitlabClient, GitlabGraphQL, GitlabRest
 from dagster_gitlab._utils.enums import ClientType
@@ -8,30 +8,17 @@ from dagster_gitlab._utils.warn import experimental_warning, wrap_warnings
 
 
 class GitlabResource(ConfigurableResource):  # noqa: D101
-    def __init__(  # noqa: PLR0913
-        self,
-        token: str,
-        url: str,
-        project_id: int | None,
-        client_type: ClientType = ClientType.REST,
-        *,
-        ssl_verify: bool = True,
-        ignore_experimental: bool = False,
-    ) -> None:
-        """A GitLab resource."""
-        self._ignore_experimental = ignore_experimental
+    token: str
+    url: str
+    project_id: int | None
+    client_type: ClientType = ClientType.REST
+    ssl_verify: bool = True
+    ignore_experimental: bool = False
 
-        with wrap_warnings(ignore=self._ignore_experimental):
-            if client_type is ClientType.GRAPHQL:
+    def __post_init__(self) -> None:
+        with wrap_warnings(ignore=self.ignore_experimental):
+            if self.client_type is ClientType.GRAPHQL:
                 experimental_warning(obj=GitlabGraphQL)
-
-        self._client_type = client_type
-
-        # Client args
-        self._token = token
-        self._url = url
-        self._project_id = project_id
-        self._ssl_verify = ssl_verify
 
     # These overloads are used to says that kwargs are only allowed with a custom_client
     @overload
@@ -50,24 +37,19 @@ class GitlabResource(ConfigurableResource):  # noqa: D101
         **kwargs: Any,
     ) -> GitlabClient:
         kwargs = {
-            "token": self._token,
-            "url": self._url,
-            "project_id": self._project_id,
-            "ssl_verify": self._ssl_verify,
+            "token": self.token,
+            "url": self.url,
+            "default_project_id": self.project_id,
+            "ssl_verify": self.ssl_verify,
             **kwargs,
         }
 
         if custom_client is not None:
             return custom_client(**kwargs)
 
-        match self._client_type:
+        match self.client_type:
             case ClientType.REST:
                 return GitlabRest(**kwargs)
             case ClientType.GRAPHQL:
-                with wrap_warnings(ignore=self._ignore_experimental):
+                with wrap_warnings(ignore=self.ignore_experimental):
                     return GitlabGraphQL(**kwargs)
-
-
-@resource(config_schema=GitlabResource.to_config_schema(), description="GitLab client.")
-def gitlab_resource(context: InitResourceContext) -> GitlabClient:  # noqa: D103
-    return GitlabResource(**context.resource_config).get_client()

@@ -25,7 +25,9 @@ class GitlabGraphQL:
         raise NotImplementedError(msg)
 
     # # Issues
-    def create_issue(self, project_namspace: str, title: str, body: str) -> None:
+    def create_issue(
+        self, title: str, description: str, *, project_id: int | None = None
+    ) -> dict[str, Any]:
         msg = "Method not yet implemented."
         raise NotImplementedError(msg)
 

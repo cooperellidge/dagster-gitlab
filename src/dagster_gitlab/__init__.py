@@ -1,7 +1,7 @@
 from dagster_gitlab.clients._graphql import GitlabGraphQL
 from dagster_gitlab.clients._rest import GitlabRest
 from dagster_gitlab.protocols import GitlabClient
-from dagster_gitlab.resources import GitlabResource, gitlab_resource
+from dagster_gitlab.resources import GitlabResource
 from dagster_gitlab.sensors import (
     gitlab_on_failure,
     gitlab_on_success,
@@ -15,7 +15,6 @@ __all__ = [
     "GitlabRest",
     "gitlab_on_failure",
     "gitlab_on_success",
-    "gitlab_resource",
     "make_gitlab_on_run_failure_sensor",
 ]
 

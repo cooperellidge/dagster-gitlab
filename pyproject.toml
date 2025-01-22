@@ -46,6 +46,7 @@ ignore = [
     "COM812", # Avoid conflict with formatter
     "D100",   # Package level docstrings are a bit weird
     "D104",   # Module level docstrings are a bit weird
+    "D105",   # Docstrings on dunder methods are a bit weird
     "TD",     # I like todos
     "FIX002", # I still like todos
 ]

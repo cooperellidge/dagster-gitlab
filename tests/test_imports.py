@@ -21,12 +21,10 @@ def test_import_protocols_module() -> None:
 
 def test_import_resources_toplevel() -> None:
     from dagster_gitlab import GitlabResource
-    from dagster_gitlab import gitlab_resource
 
 
 def test_import_resources_module() -> None:
     from dagster_gitlab.resources import GitlabResource
-    from dagster_gitlab.resources import gitlab_resource
 
 
 def test_import_sensors_toplevel() -> None:
