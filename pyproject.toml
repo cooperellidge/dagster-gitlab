@@ -1,7 +1,7 @@
 [project]
 name = "dagster-gitlab"
 version = "0.0.2"
-description = "Provides a Dagster integration that is a wrapper around python-gitlab, using the v4 GitLab API"
+description = "A Dagster integration for a GitLab client using the v4 GitLab API"
 readme = "README.md"
 license = { text = "MIT License" }
 authors = [{ name = "Cooper Ellidge", email = "cooper.ellidge@gmail.com" }]
@@ -32,6 +32,7 @@ docs = ["mkdocs-material>=9.5.49", "mkdocstrings[python]>=0.27.0"]
 Homepage = "https://github.com/cooperellidge/dagster-gitlab"
 Repository = "https://github.com/cooperellidge/dagster-gitlab"
 Documentation = "https://cooperellidge.github.io/dagster-gitlab"
+Example = "https://gitlab.com/cooperellidge/test-dagster"
 
 [build-system]
 requires = ["hatchling"]

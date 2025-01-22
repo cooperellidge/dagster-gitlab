@@ -101,20 +101,20 @@ class GitlabRest:
     def create_issue(
         self, title: str, description: str, *, project_id: int | None = None
     ) -> dict[str, Any]:
-        """_summary_.
+        """Create a new issue.
 
-        https://python-gitlab.readthedocs.io/en/stable/api/gitlab.v4.html#gitlab.v4.objects.ProjectIssue
+        See `python-gitlab` [issues docs](https://python-gitlab.readthedocs.io/en/stable/gl_objects/issues.html#project-issues)
 
         Args:
-            title: _description_
-            description: _description_
-            project_id: _description_
+            title: Issue title
+            description: Issue descrition
+            project_id: Project ID override, uses `default_project_id` if None.
 
         Raises:
-            TypeError: _description_
+            TypeError: New issue is not `ProjectIssue`
 
         Returns:
-            _description_
+            New issue attributes
         """
         project = self._get_project_id(project_id=project_id)
         issue = project.issues.create(
@@ -125,7 +125,7 @@ class GitlabRest:
         )
 
         if not is_rest_object_subclass(issue, gitlab.v4.objects.issues.ProjectIssue):
-            msg = f"New mr is not ProjectMergeRequest: {type(issue)}"
+            msg = f"New issue is not `ProjectIssue`: {type(issue)}"
             raise TypeError(msg)
 
         return issue.attributes
