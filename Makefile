@@ -57,7 +57,14 @@ serve-docs:  ## Serve docs on localhost:8000
 	uv run mkdocs serve
 
 .PHONY: set-version
-set-version: ## Change version by passing in "v=x.y.z", updating pyproject.toml and lockfile
+set-version: ## Change version by passing in "v=x.y.z", updating pyproject.toml, __init__.py and lockfile
+	@if [ -z "$(v)" ]; then \
+        echo "Error: v is required. Usage: make set-version v=value"; \
+        exit 1; \
+    fi
+
 	sed -i '' 's/^version *= *".*"/version = "$(v)"/' pyproject.toml
+	sed -i '' 's/^__version__ *= *".*"/__version__ = "$(v)"/' src/dagster_gitlab/__init__.py
+
 	uv lock --upgrade-package dagster-gitlab
 

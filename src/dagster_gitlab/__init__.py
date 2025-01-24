@@ -6,6 +6,8 @@ from dagster_gitlab.sensors import (
     make_gitlab_on_run_failure_sensor,
 )
 
+__version__ = "0.0.3"
+
 __all__ = [
     "GitlabResource",
     "GitlabRest",
