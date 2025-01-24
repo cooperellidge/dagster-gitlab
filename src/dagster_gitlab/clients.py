@@ -36,7 +36,7 @@ class GitlabRest:
         )
         self._default_project_id = default_project_id
 
-    def _get_project_id(self, project_id: int | None) -> gitlab.v4.objects.Project:
+    def _get_project(self, project_id: int | None) -> gitlab.v4.objects.Project:
         if project_id is not None:
             return self._client.projects.get(
                 id=project_id,
@@ -62,7 +62,7 @@ class GitlabRest:
         *,
         remove_source_branch: bool = False,
     ) -> dict[str, Any]:
-        """Create a project merge request.
+        """Create a merge request.
 
         Args:
             source_branch: _description_
@@ -79,7 +79,7 @@ class GitlabRest:
         Returns:
             _description_
         """
-        project = self._get_project_id(project_id=project_id)
+        project = self._get_project(project_id=project_id)
         mr = project.mergerequests.create(
             data={
                 "source_branch": source_branch,
@@ -91,68 +91,66 @@ class GitlabRest:
             }
         )
 
-        if not is_rest_object_subclass(
-            mr, gitlab.v4.objects.merge_requests.ProjectMergeRequest
-        ):
-            msg = f"New mr is not ProjectMergeRequest: {type(mr)}"
+        if not is_rest_object_subclass(mr, gitlab.v4.objects.ProjectMergeRequest):
+            msg = f"Expected `ProjectMergeRequest` from GitLab SDK, got {type(mr)}"
             raise TypeError(msg)
 
         return mr.attributes
 
     def _get_merge_request(
-        self, mr_iid: int, project_id: int | None
+        self, iid: int, project_id: int | None
     ) -> gitlab.v4.objects.ProjectMergeRequest:
-        project = self._get_project_id(project_id=project_id)
-        return project.mergerequests.get(id=mr_iid)
+        project = self._get_project(project_id=project_id)
+        return project.mergerequests.get(id=iid)
 
-    def get_merge_request(self, mr_iid: int, project_id: int | None) -> dict[str, Any]:
-        """Get an existing merge request.
+    def get_merge_request(self, iid: int, project_id: int | None) -> dict[str, Any]:
+        """Get a merge request.
 
         Args:
-            mr_iid: _description_
+            iid: _description_
             project_id: _description_
 
         Returns:
             _description_
         """
-        mr = self._get_merge_request(mr_iid=mr_iid, project_id=project_id)
+        mr = self._get_merge_request(iid=iid, project_id=project_id)
         return mr.attributes
 
     def update_merge_request(
-        self, mr_iid: int, updates: dict[str, Any], project_id: int | None
+        self, iid: int, updates: dict[str, Any], project_id: int | None
     ) -> dict[str, Any]:
-        """Update an existing merge request.
+        """Update a merge request.
 
         Args:
-            mr_iid: _description_
+            iid: _description_
             updates: _description_
             project_id: _description_
 
         Returns:
             _description_
         """
-        mr = self._get_merge_request(mr_iid=mr_iid, project_id=project_id)
+        mr = self._get_merge_request(iid=iid, project_id=project_id)
         for k, v in updates.items():
             setattr(mr, k, v)
         mr.save()
         return mr.attributes
 
-    def close_merge_request(
-        self, mr_iid: int, project_id: int | None
-    ) -> dict[str, Any]:
+    def close_merge_request(self, iid: int, project_id: int | None) -> dict[str, Any]:
         """Close a merge request.
 
         Args:
-            mr_iid: _description_
+            iid: _description_
             project_id: _description_
 
         Returns:
             _description_
         """
-        mr = self._get_merge_request(mr_iid=mr_iid, project_id=project_id)
+        mr = self._get_merge_request(iid=iid, project_id=project_id)
         mr.state_event = "close"
         mr.save()
         return mr.attributes
+
+    # Issues
 
     def create_issue(
         self, title: str, description: str, *, project_id: int | None = None
@@ -172,7 +170,7 @@ class GitlabRest:
         Returns:
             New issue attributes
         """
-        project = self._get_project_id(project_id=project_id)
+        project = self._get_project(project_id=project_id)
         issue = project.issues.create(
             data={
                 "title": title,
@@ -180,8 +178,86 @@ class GitlabRest:
             }
         )
 
-        if not is_rest_object_subclass(issue, gitlab.v4.objects.issues.ProjectIssue):
+        if not is_rest_object_subclass(issue, gitlab.v4.objects.ProjectIssue):
             msg = f"Expected `ProjectIssue` from GitLab SDK, got {type(issue)}"
             raise TypeError(msg)
 
         return issue.attributes
+
+    def _get_issue(
+        self, iid: int, project_id: int | None
+    ) -> gitlab.v4.objects.ProjectIssue:
+        project = self._get_project(project_id=project_id)
+        return project.issues.get(id=iid)
+
+    def get_issue(self, iid: int, project_id: int | None) -> dict[str, Any]:
+        """Get an issue.
+
+        Args:
+            iid: _description_
+            project_id: _description_
+
+        Returns:
+            _description_
+        """
+        issue = self._get_issue(iid=iid, project_id=project_id)
+        return issue.attributes
+
+    def update_issue(
+        self, iid: int, updates: dict[str, Any], project_id: int | None
+    ) -> dict[str, Any]:
+        """Update an issue.
+
+        Args:
+            iid: _description_
+            updates: _description_
+            project_id: _description_
+
+        Returns:
+            _description_
+        """
+        issue = self._get_issue(iid=iid, project_id=project_id)
+        for k, v in updates.items():
+            setattr(issue, k, v)
+        issue.save()
+        return issue.attributes
+
+    def close_issue(self, iid: int, project_id: int | None = None) -> dict[str, Any]:
+        """Close an issue.
+
+        Args:
+            iid: _description_
+            project_id: _description_. Defaults to None.
+
+        Returns:
+            _description_
+        """
+        issue = self._get_issue(iid=iid, project_id=project_id)
+        issue.state_event = "close"
+        issue.save()
+        return issue.attributes
+
+    # Create issue note
+
+    def create_issue_note(
+        self, iid: int, body: str, project_id: int | None
+    ) -> dict[str, Any]:
+        """Create a note on an issue.
+
+        Args:
+            iid: _description_
+            body: _description_
+            project_id: _description_
+
+        Returns:
+            _description_
+        """
+        issue = self._get_issue(iid=iid, project_id=project_id)
+
+        note = issue.notes.create(data={"body": body})
+
+        if not is_rest_object_subclass(issue, gitlab.v4.objects.ProjectIssueNote):
+            msg = f"Expected `ProjectIssue` from GitLab SDK, got {type(issue)}"
+            raise TypeError(msg)
+
+        return note.attributes
