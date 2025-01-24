@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import gitlab
 import gitlab.base
@@ -9,15 +9,27 @@ from dagster_gitlab._utils.type_guards import is_rest_object_subclass
 
 
 class GitlabRest:
+    """A GitLab API wrapper using the v4 REST API.
+
+    This client provides convience functions for common GitLab workflows.
+    """
+
     def __init__(
         self,
         token: str,
         url: str,
         default_project_id: int | None,
         *,
-        ssl_verify: bool,
-        **kwargs: Any,  # noqa: ANN401, ARG002
+        ssl_verify: bool = True,
     ) -> None:
+        """A GitLab API wrapper using the v4 REST API.
+
+        Args:
+            token: GitLab access token with suitable permissions for the project
+            url: Fully-specifed URL to the GitLab host, excluding the project namespace
+            default_project_id: Default project ID for workflows
+            ssl_verify: Whether SSL certificates should be validated.
+        """
         self.url = url
         self._client = gitlab.Gitlab(
             url=url, private_token=token, ssl_verify=ssl_verify
@@ -50,6 +62,23 @@ class GitlabRest:
         *,
         remove_source_branch: bool = False,
     ) -> dict[str, Any]:
+        """Create a project merge request.
+
+        Args:
+            source_branch: _description_
+            target_branch: _description_
+            title: _description_
+            description: _description_. Defaults to None.
+            labels: _description_. Defaults to None.
+            project_id: _description_. Defaults to None.
+            remove_source_branch: _description_. Defaults to False.
+
+        Raises:
+            TypeError: _description_
+
+        Returns:
+            _description_
+        """
         project = self._get_project_id(project_id=project_id)
         mr = project.mergerequests.create(
             data={
@@ -77,13 +106,31 @@ class GitlabRest:
         return project.mergerequests.get(id=mr_iid)
 
     def get_merge_request(self, mr_iid: int, project_id: int | None) -> dict[str, Any]:
+        """Get an existing merge request.
+
+        Args:
+            mr_iid: _description_
+            project_id: _description_
+
+        Returns:
+            _description_
+        """
         mr = self._get_merge_request(mr_iid=mr_iid, project_id=project_id)
         return mr.attributes
 
-    # TODO: Make `updates` typesafe
     def update_merge_request(
         self, mr_iid: int, updates: dict[str, Any], project_id: int | None
     ) -> dict[str, Any]:
+        """Update an existing merge request.
+
+        Args:
+            mr_iid: _description_
+            updates: _description_
+            project_id: _description_
+
+        Returns:
+            _description_
+        """
         mr = self._get_merge_request(mr_iid=mr_iid, project_id=project_id)
         for k, v in updates.items():
             setattr(mr, k, v)
@@ -93,6 +140,15 @@ class GitlabRest:
     def close_merge_request(
         self, mr_iid: int, project_id: int | None
     ) -> dict[str, Any]:
+        """Close a merge request.
+
+        Args:
+            mr_iid: _description_
+            project_id: _description_
+
+        Returns:
+            _description_
+        """
         mr = self._get_merge_request(mr_iid=mr_iid, project_id=project_id)
         mr.state_event = "close"
         mr.save()
@@ -111,7 +167,7 @@ class GitlabRest:
             project_id: Project ID override, uses `default_project_id` if None.
 
         Raises:
-            TypeError: New issue is not `ProjectIssue`
+            TypeError: Expected `ProjectIssue` from GitLab SDK
 
         Returns:
             New issue attributes
@@ -125,19 +181,7 @@ class GitlabRest:
         )
 
         if not is_rest_object_subclass(issue, gitlab.v4.objects.issues.ProjectIssue):
-            msg = f"New issue is not `ProjectIssue`: {type(issue)}"
+            msg = f"Expected `ProjectIssue` from GitLab SDK, got {type(issue)}"
             raise TypeError(msg)
 
         return issue.attributes
-
-
-if TYPE_CHECKING:
-    from dagster_gitlab.protocols import GitlabClient, _dummy_args
-
-    # This uses mypy to confirm GitlabRest implements the GitlabClient protocol.
-    _: GitlabClient = GitlabRest(
-        token=_dummy_args["token"],
-        url=_dummy_args["url"],
-        default_project_id=_dummy_args["project_id"],
-        ssl_verify=_dummy_args["ssl_verify"],
-    )

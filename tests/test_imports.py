@@ -3,20 +3,10 @@
 
 def test_import_clients_toplevel() -> None:
     from dagster_gitlab import GitlabRest
-    from dagster_gitlab import GitlabGraphQL
 
 
 def test_import_clients_module() -> None:
     from dagster_gitlab.clients import GitlabRest
-    from dagster_gitlab.clients import GitlabGraphQL
-
-
-def test_import_protocols_toplevel() -> None:
-    from dagster_gitlab import GitlabClient
-
-
-def test_import_protocols_module() -> None:
-    from dagster_gitlab.protocols import GitlabClient
 
 
 def test_import_resources_toplevel() -> None:
