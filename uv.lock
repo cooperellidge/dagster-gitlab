@@ -208,7 +208,7 @@ wheels = [
 
 [[package]]
 name = "dagster-gitlab"
-version = "0.0.2"
+version = "0.0.3"
 source = { editable = "." }
 dependencies = [
     { name = "dagster" },
@@ -229,8 +229,8 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "dagster", specifier = ">=1.9.8" },
-    { name = "python-gitlab", specifier = ">=5.3.1" },
+    { name = "dagster", specifier = ">=1.7.1" },
+    { name = "python-gitlab", specifier = ">=4.4.0" },
     { name = "responses", specifier = ">=0.25.6" },
 ]
 

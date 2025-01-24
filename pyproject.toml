@@ -1,6 +1,6 @@
 [project]
 name = "dagster-gitlab"
-version = "0.0.2"
+version = "0.0.3"
 description = "A Dagster integration for a GitLab client using the v4 GitLab API"
 readme = "README.md"
 license = { text = "MIT License" }
